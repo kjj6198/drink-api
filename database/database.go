@@ -16,14 +16,14 @@ type Database struct {
 }
 
 // Connect connect to database
-func (db *Database) Connect() {
-	db.Connection = pg.Connect(&pg.Options{
+func Connect() *pg.DB {
+	db := pg.Connect(&pg.Options{
 		User:     os.Getenv("DATABASE_USERNAME"),
 		Addr:     fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("DATABASE_PORT")),
 		Database: os.Getenv("DATABASE"),
 	})
 
-	db.Connection.OnQueryProcessed(func(event *pg.QueryProcessedEvent) {
+	db.OnQueryProcessed(func(event *pg.QueryProcessedEvent) {
 		query, err := event.FormattedQuery()
 
 		if err != nil {
@@ -32,19 +32,13 @@ func (db *Database) Connect() {
 
 		log.Printf("%s %s", time.Since(event.StartTime), query)
 	})
+
+	return db
 }
 
 // Close close a connection
-func (db *Database) Close() error {
-	if db.Connection != nil {
-		db.Connection.Close()
-		return nil
-	}
+func Close(db *pg.DB) error {
+	db.Close()
 
 	return errors.New("Can not connect database")
-}
-
-// New create a database connection.
-func New() *Database {
-	return &Database{}
 }

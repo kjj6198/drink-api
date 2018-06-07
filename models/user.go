@@ -11,8 +11,8 @@ type User struct {
 	EncryptedPassword string
 	SinginCount       int32
 	CurrentSignInAt   time.Time
-	CreatedAt         time.Time `json:"created_at" binding:"required"`
-	UpdatedAt         time.Time `json:"updated_at" binding:"required"`
+	CreatedAt         time.Time `json:"created_at" sql:"default:now()"`
+	UpdatedAt         time.Time `json:"updated_at" sql:"default:now()"`
 	Picture           string    `json:"picture"`
 	UserName          string    `json:"user_name"`
 	IsAdmin           bool
