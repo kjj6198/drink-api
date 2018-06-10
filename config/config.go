@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -13,8 +14,12 @@ var (
 	port string
 )
 
+const (
+	configPath = "./config/env.yml"
+)
+
 func Load() {
-	file, err := ioutil.ReadFile("./config/env.yml")
+	file, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
 		panic(err)
@@ -43,4 +48,19 @@ func Load() {
 	if port != "" {
 		os.Setenv("port", port)
 	}
+}
+
+// MustGet return env and return error if not found key
+func MustGet(key string) (result string) {
+	var env = os.Getenv(key)
+	if env == "" {
+		msg := fmt.Sprintf(
+			"can not find %s in `ENV`, please checkout your env file.",
+			key,
+		)
+
+		panic(msg)
+	}
+
+	return env
 }

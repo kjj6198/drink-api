@@ -2,10 +2,13 @@ package models
 
 import (
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 // User is user
 type User struct {
+	gorm.Model
 	ID                string `json:"id"`
 	Email             string `json:"email" binding:"required"`
 	EncryptedPassword string
