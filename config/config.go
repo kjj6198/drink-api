@@ -18,11 +18,15 @@ const (
 	configPath = "./config/env.yml"
 )
 
-func Load() {
+// Load load variable from config/env.yml
+// return true if load successfully
+// return false if can not load env.yml
+func Load() bool {
 	file, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		panic(err)
+		fmt.Println("can not found config file.")
+		return false
 	}
 
 	var config = make(map[string]string)
@@ -48,6 +52,8 @@ func Load() {
 	if port != "" {
 		os.Setenv("port", port)
 	}
+
+	return true
 }
 
 // MustGet return env and return error if not found key
