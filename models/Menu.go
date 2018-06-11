@@ -1,32 +1,38 @@
 package models
 
 import (
+	"drink-api/model"
 	"drink-api/services"
 	"drink-api/utils"
 	"fmt"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 type Menu struct {
-	gorm.Model
-	ID          int32     `json:"id"`
+	model.Model
 	Name        string    `json:"name" binding:"required"`
 	Channel     string    `json:"channel" binding:"required"`
 	IsActive    bool      `json:"is_active"`
-	CreatedAt   time.Time `json:"created_at" sql:"default:now()"`
-	UpdatedAt   time.Time `json:"updated_at" sql:"default:now()"`
 	EndTime     time.Time `json:"end_time" binding:"required"`
 	DrinkShopID int32     `json:"drink_shop"`
-	UserID      int32     `json:"user" pg:"fk:user_id"`
 	Orders      []*Order  `json:"orders"`
-	ImageURL    string    `json:image_url`
+	User        User      `json:"user" gorm:"auto_preload"`
+	UserID      uint      `json:"user_id"`
+	ImageURL    string    `json:"image_url"`
 }
 
 // GetEndTime return endtime unix
 func (menu Menu) GetEndTime() int64 {
 	return menu.EndTime.Unix()
+}
+
+func (menu Menu) GetRemainTime() (sec float64, isEnded bool) {
+	sec = menu.EndTime.Sub(time.Now()).Seconds()
+	if sec > 0 {
+		return sec, false
+	}
+
+	return sec, true
 }
 
 func format(date time.Time, formatter string) string {

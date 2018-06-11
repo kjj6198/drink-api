@@ -3,33 +3,29 @@ package main
 import (
 	"drink-api/apis"
 	"drink-api/config"
+	"drink-api/database"
 	"fmt"
 	"net/http"
 	"os"
-
-	"github.com/jinzhu/gorm"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 func main() {
-	env := os.Getenv("env")
+
 	router := gin.Default()
 	config.Load()
-	dbstr := fmt.Sprintf(
-		"host=%s port=%s user=%s dbname=%s",
-		os.Getenv("DATABASE_PORT"),
-		os.Getenv("HOST"),
-		os.Getenv("DATABASE_USERNAME"),
-		os.Getenv("DATABASE"),
-	)
 
-	db, err := gorm.Open("postgres", dbstr)
+	db, err := database.Connect(&database.DataBaseOptions{
+		Addr:     os.Getenv("HOST"),
+		Port:     os.Getenv("DATABASE_PORT"),
+		User:     os.Getenv("DATABASE_USERNAME"),
+		Database: os.Getenv("DATABASE"),
+		SSLMode:  false,
+	})
 
-	if env == "development" {
-		db.LogMode(true)
-	}
+	db.LogMode(true)
 
 	if err != nil {
 		fmt.Println("can not connect database.")
@@ -37,6 +33,9 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
+	v1.Use(func(c *gin.Context) {
+		c.Set("db", db)
+	})
 
 	v1.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -45,6 +44,7 @@ func main() {
 	})
 
 	v1.POST("/menus", apis.Create)
+	v1.GET("/menus/:id", apis.Show)
 	if os.Getenv("env") == "development" {
 		v1.Use(func(c *gin.Context) {
 			c.Writer.Header().Set(

@@ -1,23 +1,19 @@
 package models
 
 import (
+	"drink-api/model"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 // User is user
 type User struct {
-	gorm.Model
-	ID                string `json:"id"`
+	model.Model
 	Email             string `json:"email" binding:"required"`
 	EncryptedPassword string
 	SinginCount       int32
 	CurrentSignInAt   time.Time
-	CreatedAt         time.Time `json:"created_at" sql:"default:now()"`
-	UpdatedAt         time.Time `json:"updated_at" sql:"default:now()"`
-	Picture           string    `json:"picture"`
-	UserName          string    `json:"user_name"`
+	Picture           string `json:"picture"`
+	UserName          string `json:"user_name"`
 	IsAdmin           bool
 	Orders            []*Order `json:"orders"`
 	Menus             []*Menu  `json:"menus"`

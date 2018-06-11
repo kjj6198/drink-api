@@ -1,44 +1,36 @@
 package database
 
 import (
-	"errors"
 	"fmt"
-	"log"
-	"os"
-	"time"
 
-	"github.com/go-pg/pg"
+	"github.com/jinzhu/gorm"
 )
 
-// Database struct...
-type Database struct {
-	Connection *pg.DB
+type DataBaseOptions struct {
+	Addr     string
+	Port     string
+	User     string
+	Database string
+	Password string
+	SSLMode  bool
 }
 
-// Connect connect to database
-func Connect() *pg.DB {
-	db := pg.Connect(&pg.Options{
-		User:     os.Getenv("DATABASE_USERNAME"),
-		Addr:     fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("DATABASE_PORT")),
-		Database: os.Getenv("DATABASE"),
-	})
-
-	db.OnQueryProcessed(func(event *pg.QueryProcessedEvent) {
-		query, err := event.FormattedQuery()
-
-		if err != nil {
-			panic(err)
-		}
-
-		log.Printf("%s %s", time.Since(event.StartTime), query)
-	})
-
-	return db
+func (option *DataBaseOptions) String() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s dbname=%s password=\"%s\" sslmode=disable",
+		option.Addr,
+		option.Port,
+		option.User,
+		option.Database,
+		option.Password,
+	)
 }
 
-// Close close a connection
-func Close(db *pg.DB) error {
+// Connect connect db
+func Connect(option *DataBaseOptions) (db *gorm.DB, err error) {
+	return gorm.Open("postgres", option.String())
+}
+
+func Close(db *gorm.DB) {
 	db.Close()
-
-	return errors.New("Can not connect database")
 }
