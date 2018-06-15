@@ -14,11 +14,11 @@ type Menu struct {
 	Channel     string    `json:"channel" binding:"required"`
 	IsActive    bool      `json:"is_active"`
 	EndTime     time.Time `json:"end_time" binding:"required"`
-	DrinkShopID int32     `json:"drink_shop"`
-	Orders      []*Order  `json:"orders"`
-	User        User      `json:"user" gorm:"auto_preload"`
+	DrinkShopID int32     `json:"-"`
+	DrinkShop   DrinkShop `json:"drink_shop"`
+	Orders      []Order   `json:"orders"`
+	User        User      `json:"user"`
 	UserID      uint      `json:"user_id"`
-	ImageURL    string    `json:"image_url"`
 }
 
 // GetEndTime return endtime unix
@@ -36,7 +36,13 @@ func (menu Menu) GetRemainTime() (sec float64, isEnded bool) {
 }
 
 func format(date time.Time, formatter string) string {
-	return fmt.Sprintf(formatter, date.Month(), date.Day(), date.Hour(), date.Minute())
+	return fmt.Sprintf(
+		formatter,
+		date.Month(),
+		date.Day(),
+		date.Hour(),
+		date.Minute(),
+	)
 }
 
 func (menu *Menu) AfterSave() (err error) {
@@ -63,7 +69,7 @@ func (menu *Menu) AfterSave() (err error) {
 		format(menu.EndTime, formatStr),
 		utils.GetURLByID("menus", menu.ID),
 		fmt.Sprintf("%.0f分%.0f秒", remainTime.Minutes(), remainTime.Seconds()),
-		menu.ImageURL,
+		menu.DrinkShop.ImageURL,
 	)
 
 	return services.SendMessage(msg, channel)

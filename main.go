@@ -45,6 +45,7 @@ func main() {
 
 	v1.POST("/menus", apis.Create)
 	v1.GET("/menus/:id", apis.Show)
+	v1.POST("/upload", apis.GetPresignURL)
 	if os.Getenv("env") == "development" {
 		v1.Use(func(c *gin.Context) {
 			c.Writer.Header().Set(

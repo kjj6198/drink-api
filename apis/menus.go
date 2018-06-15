@@ -7,10 +7,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type menuParams struct {
-	Name String
-}
-
 func Create(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "ok",
@@ -19,12 +15,17 @@ func Create(c *gin.Context) {
 
 func Show(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
+	id := c.Param("id")
+	menu := db.
+		Model(&models.Menu{}).
+		Where("id = ?", id)
 
-	result := db.First(&models.Menu{})
-	menu := result.Value.(*models.Menu)
-	sec, isEnded := menu.GetRemainTime()
-	if isEnded {
-		c.JSON(200)
+	if menu.RecordNotFound() {
+		c.JSON(404, gin.H{
+			"message": "error",
+		})
+		return
 	}
-	c.JSON(200, result)
+
+	c.JSON(200, menu.Value)
 }

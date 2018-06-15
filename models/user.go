@@ -8,15 +8,13 @@ import (
 // User is user
 type User struct {
 	model.Model
-	Email             string `json:"email" binding:"required"`
-	EncryptedPassword string
-	SinginCount       int32
-	CurrentSignInAt   time.Time
-	Picture           string `json:"picture"`
-	UserName          string `json:"user_name"`
-	IsAdmin           bool
-	Orders            []*Order `json:"orders"`
-	Menus             []*Menu  `json:"menus"`
+	Email             string    `json:"email,omitempty" binding:"required"`
+	EncryptedPassword string    `json:"-"`
+	SinginCount       int32     `json:"-"`
+	CurrentSignInAt   time.Time `json:"-"`
+	Picture           string    `json:"picture,omitempty"`
+	UserName          string    `json:"user_name,omitempty"`
+	IsAdmin           bool      `json:"is_admin"`
 }
 
 // GoogleAccountInfo is account info from google oauth.
