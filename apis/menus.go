@@ -2,12 +2,20 @@ package apis
 
 import (
 	"drink-api/models"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
 
 func Create(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	menu := &models.Menu{}
+	err := c.ShouldBindJSON(menu)
+	if err != nil {
+		fmt.Println(err)
+	}
+	db.Create(menu)
 	c.JSON(200, gin.H{
 		"message": "ok",
 	})

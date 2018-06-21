@@ -56,7 +56,7 @@ func (menu *Menu) AfterSave() (err error) {
 	remainTime := menu.EndTime.Sub(menu.CreatedAt)
 
 	msg := fmt.Sprintf(`
-	已經發起了訂飲料活動 %s\n	
+	%s 已經發起了訂飲料活動\n	
 	*店家名稱*: %s
 	*開始時間*: %s
 	*結束時間*: %s
@@ -64,6 +64,7 @@ func (menu *Menu) AfterSave() (err error) {
 	*剩餘時間*: %s
 	*訂單圖片*: %s
 	`,
+		menu.User.GetName(),
 		menu.Name,
 		format(menu.CreatedAt, formatStr),
 		format(menu.EndTime, formatStr),
