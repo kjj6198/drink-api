@@ -21,6 +21,7 @@ func main() {
 		Addr:     os.Getenv("HOST"),
 		Port:     os.Getenv("DATABASE_PORT"),
 		User:     os.Getenv("DATABASE_USERNAME"),
+		Password: os.Getenv("DATABASE_PASSWORD"),
 		Database: os.Getenv("DATABASE"),
 		SSLMode:  false,
 	})

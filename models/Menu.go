@@ -47,9 +47,6 @@ func format(date time.Time, formatter string) string {
 
 func (menu *Menu) AfterSave() (err error) {
 	channel := menu.Channel
-	if menu.Channel == "" {
-		channel = "#frontend-underground"
-	}
 
 	formatStr := "%02d-%02d %02d:%02d:%02d"
 	// Duration

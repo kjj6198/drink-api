@@ -17,7 +17,7 @@ type DataBaseOptions struct {
 
 func (option *DataBaseOptions) String() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s dbname=%s password=\"%s\" sslmode=disable",
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=require",
 		option.Addr,
 		option.Port,
 		option.User,
